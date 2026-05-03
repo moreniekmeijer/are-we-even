@@ -62,7 +62,7 @@
                 {% elseif dashboardData.balance < 0 %}
                     You owe {{ dashboardData.partnerName }} €{{ dashboardData.balance|abs|number_format(2) }}
                 {% else %}
-                    You are even (Quitte!)
+                    You are even!
                 {% endif %}
             </p>
             <p class="mt-1" style="color: var(--text-secondary); font-size: 0.875rem;">
