@@ -1,0 +1,10 @@
+<h1>You've been invited!</h1>
+
+<p>Hi there,</p>
+<p><strong>{{ inviterName }}</strong> has invited you to join them on Are We Even to track your shared expenses.</p>
+
+<p>
+    <a href="{{ absolute_url(path('app_register', {'token': token})) }}">Click here to register and connect!</a>
+</p>
+
+<p>See you soon!</p>

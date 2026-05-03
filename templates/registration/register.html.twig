@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<div class="flat-container">
+    <h1>Create an Account</h1>
+
+    {{ form_start(registrationForm) }}
+        {% if not registrationForm.vars.valid %}
+            <div class="alert-error">
+                {{ form_errors(registrationForm) }}
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            {{ form_label(registrationForm.name) }}
+            {{ form_widget(registrationForm.name, {'attr': {'class': 'form-control', 'placeholder': 'Your Name'}}) }}
+            <div style="color: #fca5a5; font-size: 0.8rem; margin-top: 0.25rem;">
+                {{ form_errors(registrationForm.name) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(registrationForm.email) }}
+            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'you@example.com'}}) }}
+            <div style="color: #fca5a5; font-size: 0.8rem; margin-top: 0.25rem;">
+                {{ form_errors(registrationForm.email) }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            {{ form_label(registrationForm.plainPassword, 'Password') }}
+            {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'placeholder': '••••••••'}}) }}
+            <div style="color: #fca5a5; font-size: 0.8rem; margin-top: 0.25rem;">
+                {{ form_errors(registrationForm.plainPassword) }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Register</button>
+        
+        <div class="form-help">
+            Already have an account? <a href="/login">Log in here</a>
+        </div>
+    {{ form_end(registrationForm) }}
+</div>
+{% endblock %}
