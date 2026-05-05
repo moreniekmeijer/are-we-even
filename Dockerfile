@@ -31,13 +31,15 @@ RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 COPY . .
 
 # Run composer autoloader and scripts
-RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
+RUN APP_ENV=prod composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 # Warm up cache
 RUN APP_ENV=prod bin/console cache:warmup
 
 # Stage 2: Production
 FROM php:8.2-fpm-alpine
+
+ENV APP_ENV=prod
 
 # Install Nginx and other runtime dependencies
 RUN apk add --no-cache \
