@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: are-we-even-web
+    runtime: docker
+    envVars:
+      - key: APP_ENV
+        value: prod
+      - key: APP_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: are-we-even-db
+          property: connectionString
+      - key: MAILER_DSN
+        sync: false # User needs to provide this
+    plan: free # Change to a paid plan for production use
+    healthCheckPath: /
+
+databases:
+  - name: are-we-even-db
+    plan: free # Change to a paid plan for production use
+    postgresMajorVersion: "16"
