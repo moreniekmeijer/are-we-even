@@ -26,7 +26,7 @@ FROM php:8.2-fpm-alpine
 
 ENV APP_ENV=prod
 
-RUN apk add --no-cache nginx libpq libzip icu-libs supervisor gettext
+RUN apk add --no-cache nginx libpq libzip icu-libs supervisor gettext netcat-openbsd
 
 # Copy compiled PHP extensions from build stage instead of recompiling
 COPY --from=build /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/

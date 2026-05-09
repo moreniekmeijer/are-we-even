@@ -1,15 +1,24 @@
 #!/bin/sh
 set -e
 
-# Default port for local Docker; Render overrides this with its own $PORT
 export PORT=${PORT:-80}
 
 echo "Configuring Nginx for port ${PORT}..."
 envsubst '${PORT}' < /etc/nginx/http.d/default.conf.template \
   > /etc/nginx/http.d/default.conf
 
+# Start supervisord (nginx + php-fpm) in background first
+# so Render sees an open port while we wait for the DB
+/usr/bin/supervisord -c /etc/supervisord.conf &
+SUPERVISORD_PID=$!
+
 echo "Waiting for database..."
-until php bin/console doctrine:query:sql "SELECT 1" > /dev/null 2>&1; do
+# Parse host and port from DATABASE_URL
+DB_HOST=$(echo "$DATABASE_URL" | sed 's|.*@\([^:/]*\).*|\1|')
+DB_PORT=$(echo "$DATABASE_URL" | sed 's|.*:\([0-9]*\)/.*|\1|')
+DB_PORT=${DB_PORT:-5432}
+
+until nc -z "$DB_HOST" "$DB_PORT"; do
   echo "  database not ready, retrying..."
   sleep 2
 done
@@ -20,4 +29,5 @@ php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migratio
 echo "Warming cache..."
 php bin/console cache:warmup --env=prod
 
-exec "$@"
+# Wait for supervisord to keep container alive
+wait $SUPERVISORD_PID
