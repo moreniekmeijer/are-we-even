@@ -2,7 +2,7 @@ services:
     - type: web
       name: my-symfony-app
       runtime: docker
-      plan: starter
+      plan: free
       healthCheckPath: /
       envVars:
           - key: APP_ENV
@@ -16,4 +16,4 @@ services:
 
 databases:
     - name: my-symfony-db
-      plan: starter
+      plan: free
