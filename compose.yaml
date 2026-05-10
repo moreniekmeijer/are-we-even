@@ -10,7 +10,6 @@ services:
       APP_SECRET: change-me-locally
       DATABASE_URL: postgresql://app:!ChangeMe!@database:5432/app?serverVersion=16&charset=utf8
       PORT: 80
-      MAILER_DSN: brevo+api://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@default
     depends_on:
       database:
         condition: service_healthy
