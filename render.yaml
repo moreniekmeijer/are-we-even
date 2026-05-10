@@ -13,6 +13,8 @@ services:
             fromDatabase:
                 name: are-we-even-db
                 property: connectionString
+          - key: MAILER_DSN
+            sync: false
 
 databases:
     - name: are-we-even-db
