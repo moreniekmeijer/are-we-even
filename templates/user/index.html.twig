@@ -1,131 +1,145 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dashboard
+{% endblock %}
 
 {% block nav_extra %}
-    {% if relations|length > 0 %}
-    <form style="margin:0;">
-        <select onchange="window.location.href='/switch-relation/' + this.value" class="form-control" style="width: auto; padding: 0.25rem;">
-            {% for rel in relations %}
-                <option value="{{ rel.id }}" {% if activeRelation and activeRelation.id == rel.id %}selected{% endif %}>
-                    {{ rel.getOtherUser(app.user).name }}
-                </option>
-            {% endfor %}
-        </select>
-    </form>
-    {% endif %}
+	{% if relations|length > 0 %}
+		<p>
+			Connections:
+		</p>
+		<form style="margin:0;">
+			<select onchange="window.location.href='/switch-relation/' + this.value" class="form-control" style="width: auto; padding: 0.25rem;">
+				{% for rel in relations %}
+					<option value="{{ rel.id }}" {% if activeRelation and activeRelation.id == rel.id %} selected {% endif %}>
+						{{ rel.getOtherUser(app.user).name }}
+					</option>
+				{% endfor %}
+			</select>
+		</form>
+	{% endif %}
 {% endblock %}
 
 {% block body %}
 
-<div style="width: 100%; max-width: 1000px; margin: 0 auto;">
-    {# Global Flash Messages Block #}
-    {% for label, messages in app.flashes %}
-        {% for message in messages %}
-            <div class="alert-{{ label }}" role="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endfor %}
+	<div
+		style="width: 100%; max-width: 1000px; margin: 0 auto;">
+		{# Global Flash Messages Block #}
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert-{{ label }}" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+		{% endfor %}
 
-{% if not activeRelation %}
-<div class="flat-container text-center" style="max-width: 600px; margin: 2rem auto;">
-    <h1>Welcome to Are We Even!</h1>
-    <p class="mb-2" style="color: var(--text-secondary);">You don't have any connections yet. Invite someone to start tracking expenses.</p>
+		{% if not activeRelation %}
+			<div class="flat-container text-center" style="max-width: 600px; margin: 2rem auto;">
+				<h1>Welcome to Are We Even!</h1>
+				<p class="mb-2" style="color: var(--text-secondary);">You don't have any connections yet. Invite someone to start tracking expenses.</p>
 
-    <form method="post" action="/invite" class="text-left">
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('send-invite') }}">
-        <div class="form-group">
-            <label for="email">Friend's Email Address</label>
-            <input type="email" id="email" name="email" class="form-control" placeholder="friend@example.com" required>
-        </div>
-        <button type="submit" class="btn-primary">Send Invite</button>
-    </form>
-</div>
-{% else %}
-<div class="dashboard-grid" style="max-width: 1000px; margin: 0 auto; width: 100%;">
-    
-    <!-- Left Column: Gauge & Stats -->
-    <div class="flat-container w-100">
-        <h1>Balance with {{ dashboardData.partnerName }}</h1>
-        
-        <div class="gauge-container">
-            <div class="gauge-background"></div>
-            <!-- Dynamic needle angle passed from DashboardDataDto -->
-            <div class="gauge-needle" style="transform: rotate({{ dashboardData.needleAngle }}deg);"></div>
-        </div>
+				<form method="post" action="/invite" class="text-left">
+					<input type="hidden" name="_csrf_token" value="{{ csrf_token('send-invite') }}">
+					<div class="form-group">
+						<label for="email">Friend's Email Address</label>
+						<input type="email" id="email" name="email" class="form-control" placeholder="friend@example.com" required>
+					</div>
+					<button type="submit" class="btn-primary">Send Invite</button>
+				</form>
+			</div>
+		{% else %}
+			<div
+				class="dashboard-grid" style="max-width: 1000px; margin: 0 auto; width: 100%;">
 
-        <div class="text-center mt-1">
-            <p style="font-size: 1.5rem; font-weight: 700; color: {{ dashboardData.balance > 0 ? 'var(--success-color)' : (dashboardData.balance < 0 ? 'var(--danger-color)' : 'var(--text-primary)') }};">
-                {% if dashboardData.balance > 0 %}
-                    {{ dashboardData.partnerName }} owes you €{{ dashboardData.balance|number_format(2) }}
-                {% elseif dashboardData.balance < 0 %}
-                    You owe {{ dashboardData.partnerName }} €{{ dashboardData.balance|abs|number_format(2) }}
-                {% else %}
-                    You are even!
-                {% endif %}
-            </p>
-            <p class="mt-1" style="color: var(--text-secondary); font-size: 0.875rem;">
-                Your total: €{{ dashboardData.currentUserTotal|number_format(2) }} <br>
-                {{ dashboardData.partnerName }}'s total: €{{ dashboardData.partnerTotal|number_format(2) }}
-            </p>
-        </div>
-    </div>
+				<!-- Left Column: Gauge & Stats -->
+				<div class="flat-container w-100">
+					<h1>Balance with
+						{{ dashboardData.partnerName }}</h1>
 
-    <!-- Right Column: Add Expense & List -->
-    <div class="flex-column">
-        
-        <div class="flat-container w-100">
-            <h2 class="mb-1" style="font-size: 1.25rem;">Add Expense</h2>
-            <form method="post" action="/user">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('add-expense') }}">
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input type="text" id="description" name="description" class="form-control" placeholder="e.g. Groceries" required>
-                </div>
-                <div class="form-group">
-                    <label for="amount">Amount (€)</label>
-                    <input type="number" id="amount" name="amount" step="0.01" min="0.01" class="form-control" placeholder="0.00" required>
-                </div>
-                <button type="submit" class="btn-primary">Add Expense</button>
-            </form>
-        </div>
+					<div class="gauge-container">
+						<div class="gauge-background"></div>
+						<!-- Dynamic needle angle passed from DashboardDataDto -->
+						<div class="gauge-needle" style="transform: rotate({{ dashboardData.needleAngle }}deg);"></div>
+					</div>
 
-        <div class="flat-container w-100">
-            <h2 class="mb-1" style="font-size: 1.25rem;">Recent Expenses</h2>
-            {% if dashboardData.recentExpenses|length > 0 %}
-                <ul class="expense-list">
-                    {% for exp in dashboardData.recentExpenses %}
-                        <li class="expense-item">
-                            <div>
-                                <strong>{{ exp.description }}</strong>
-                                <div class="meta">
-                                    by {{ exp.userName ?? exp.userEmail }} on {{ exp.createdAt|date('M d') }}
-                                </div>
-                            </div>
-                            <span class="amount">€{{ exp.amount }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p style="color: var(--text-secondary); font-size: 0.875rem;">No expenses yet.</p>
-            {% endif %}
-        </div>
+					<div class="text-center mt-1">
+						<p style="font-size: 1.5rem; font-weight: 700; color: {{ dashboardData.balance > 0 ? 'var(--success-color)' : (dashboardData.balance < 0 ? 'var(--danger-color)' : 'var(--text-primary)') }};">
+							{% if dashboardData.balance > 0 %}
+								{{ dashboardData.partnerName }}
+								owes you €{{ dashboardData.balance|number_format(2) }}
+							{% elseif dashboardData.balance < 0 %}
+								You owe
+								{{ dashboardData.partnerName }}
+								€{{ dashboardData.balance|abs|number_format(2) }}
+							{% else %}
+								You are even!
+							{% endif %}
+						</p>
+						<p class="mt-1" style="color: var(--text-secondary); font-size: 0.875rem;">
+							Your total: €{{ dashboardData.currentUserTotal|number_format(2) }}
+							<br>
+							{{ dashboardData.partnerName }}'s total: €{{ dashboardData.partnerTotal|number_format(2) }}
+						</p>
+					</div>
+				</div>
 
-        <div class="flat-container w-100">
-            <h2 class="mb-1" style="font-size: 1.25rem;">Connect with Someone Else</h2>
-            <form method="post" action="/invite">
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('send-invite') }}">
-                <div class="form-group">
-                    <label for="invite-email">Email Address</label>
-                    <input type="email" id="invite-email" name="email" class="form-control" placeholder="friend@example.com" required>
-                </div>
-                <button type="submit" class="btn-primary">Send Invite</button>
-            </form>
-        </div>
+				<!-- Right Column: Add Expense & List -->
+				<div class="flex-column">
 
-    </div>
-</div>
-{% endif %}
-</div>
+					<div class="flat-container w-100">
+						<h2 class="mb-1" style="font-size: 1.25rem;">Add Expense</h2>
+						<form method="post" action="/user">
+							<input type="hidden" name="_csrf_token" value="{{ csrf_token('add-expense') }}">
+							<div class="form-group">
+								<label for="description">Description</label>
+								<input type="text" id="description" name="description" class="form-control" placeholder="e.g. Groceries" required>
+							</div>
+							<div class="form-group">
+								<label for="amount">Amount (€)</label>
+								<input type="number" id="amount" name="amount" step="0.01" min="0.01" class="form-control" placeholder="0.00" required>
+							</div>
+							<button type="submit" class="btn-primary">Add Expense</button>
+						</form>
+					</div>
+
+					<div class="flat-container w-100">
+						<h2 class="mb-1" style="font-size: 1.25rem;">Recent Expenses</h2>
+						{% if dashboardData.recentExpenses|length > 0 %}
+							<ul class="expense-list">
+								{% for exp in dashboardData.recentExpenses %}
+									<li class="expense-item">
+										<div>
+											<strong>{{ exp.description }}</strong>
+											<div class="meta">
+												by
+												{{ exp.userName ?? exp.userEmail }}
+												on
+												{{ exp.createdAt|date('M d') }}
+											</div>
+										</div>
+										<span class="amount">€{{ exp.amount }}</span>
+									</li>
+								{% endfor %}
+							</ul>
+						{% else %}
+							<p style="color: var(--text-secondary); font-size: 0.875rem;">No expenses yet.</p>
+						{% endif %}
+					</div>
+
+					<div class="flat-container w-100">
+						<h2 class="mb-1" style="font-size: 1.25rem;">Connect with Someone Else</h2>
+						<form method="post" action="/invite">
+							<input type="hidden" name="_csrf_token" value="{{ csrf_token('send-invite') }}">
+							<div class="form-group">
+								<label for="invite-email">Email Address</label>
+								<input type="email" id="invite-email" name="email" class="form-control" placeholder="friend@example.com" required>
+							</div>
+							<button type="submit" class="btn-primary">Send Invite</button>
+						</form>
+					</div>
+
+				</div>
+			</div>
+		{% endif %}
+	</div>
 {% endblock %}

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Entity\Relation;
@@ -56,10 +57,10 @@ final class RelationController extends AbstractController
                 $relation->setUser1($user);
                 $relation->setUser2($existingUser);
                 $em->persist($relation);
-                
+
                 $user->setLastViewedRelation($relation);
                 $em->flush();
-                
+
                 $this->addFlash('success', 'Relation created with ' . $existingUser->getName() . '!');
             } else {
                 $this->addFlash('info', 'You are already connected to this user.');
@@ -79,7 +80,7 @@ final class RelationController extends AbstractController
 
         // Send Email
         $emailMessage = (new TemplatedEmail())
-            ->from('noreply@AreWeEven.com')
+            ->from('areweevenapp@gmail.com')
             ->to($email)
             ->subject('You have been invited to Are We Even!')
             ->htmlTemplate('emails/invite.html.twig')
@@ -87,7 +88,7 @@ final class RelationController extends AbstractController
                 'inviterName' => $user->getName(),
                 'token' => $token,
             ]);
-        
+
         try {
             $mailer->send($emailMessage);
             $this->addFlash('success', 'Invitation sent to ' . $email . '!');
