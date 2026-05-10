@@ -152,6 +152,7 @@ class ResetPasswordController extends AbstractController
             //     ResetPasswordExceptionInterface::MESSAGE_PROBLEM_HANDLE,
             //     $e->getReason()
             // ));
+            throw new \RuntimeException($e->getReason());
 
             return $this->redirectToRoute('app_check_email');
         }
